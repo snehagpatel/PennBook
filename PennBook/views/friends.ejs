@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Friends</title>
+	<style type="text/css">
+		.bday {
+  			padding: 20px;
+		}
+		
+		.active {
+  			padding: 5px;
+		}
+		
+		ul {
+  			list-style-type: none;
+ 		}
+	</style>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+<body>
+	<%- include('../views/header', {display: 'friends', userLoggedIn: userLoggedIn, userQuery: null}); %>
+	<script type="text/javascript">
+		var is = [];
+	</script>
+	
+	<h1 class="text-primary" style="text-align:center">Friends (<%= items.length %>)</h1>
+  	<%if (items != null) { %>
+  		<ul class="list-group">
+ 			<% items.forEach(function(item) { %>
+    			<li class="list-group-item list-group-item-primary"><span class="active" id="active">o</span><a href='/profile/<%=item.user2.S%>'><%= item.user2.S %></a><span class="bday" id="bday">()</span></li>
+    			<script type="text/javascript">
+    				var friend = "<%= item.user2.S %>";
+    				is.push("<%= item.user2.S %>");
+    			</script>
+ 			<% }); %> 
+		</ul>
+  	<% } %>
+  	
+  	<%if (message != null) { %>
+  	<font color="red"><%= message %><p>
+  	<% } %>
+	
+	<script type="text/javascript">
+		var activecircs = document.getElementsByClassName("active");
+		
+		var func2 = function(friend) {
+    				return $.ajax({
+    					url: "/getactive",
+    					type: "GET",
+    					dataType: "json",
+    					async: true,
+    					cache: false,
+    					data: {
+        					user: friend
+    					}
+					});
+  			};
+		
+		for (var i = 0; i < activecircs.length; i++) {
+  			(function() {
+  			var friend = is[i];
+  			var circ = activecircs[i];
+  			
+  			func2(friend).done(function(data) {
+  				if (data == true) {
+  					circ.style.color = "green";
+  				} else {
+  					circ.style.color = "red";
+  				}
+  			})
+  			}());
+		}
+	</script>
+	
+	<script type="text/javascript">
+		var bdayElements = document.getElementsByClassName("bday");
+		
+		var func_bday = function(friend) {
+    				return $.ajax({
+    					url: "/getbirthday",
+    					type: "GET",
+    					dataType: "json",
+    					async: true,
+    					cache: false,
+    					data: {
+        					user: friend
+    					}
+					});
+  			};
+		
+		for (var i = 0; i < bdayElements.length; i++) {
+  			(function() {
+  			var friend = is[i];
+  			var bdayElem = bdayElements[i];
+  			
+  			func_bday(friend).done(function(data) {
+  				bdayElem.innerHTML = "(Birthday: " + data + ")";
+  				
+  				const now = new Date();
+  				const bday = new Date(data);
+  				bday.setDate(bday.getDate() + 1);
+  				
+  				if (now.getMonth() == bday.getMonth() && now.getDate() == bday.getDate()) {
+  					bdayElem.innerHTML += " it's their bday!";
+  						
+					bdayElem.innerHTML += " <form id='form1' method='post' action='/createbdaypost'> <button class='btn btn-primary' type='submit' id='friend' name='friend' value='" + friend + "'>Send birthday post?</button></form>";
+  				} else {
+  					bdayElem.innerHTML += " it's not their bday :(";
+  				}
+  			})
+  			}());
+		}
+	</script>
+	
+	<script type="text/javascript">
+		var r = 1;
+		
+		$(document).ready(function() {
+  			setInterval(refreshPage, 10000);
+  		});
+  		
+  		var refreshPage = function() {
+  			console.log("Refreshing x" + r + "...");
+  			r++;
+  			var activecircs = document.getElementsByClassName("active");
+		
+		var func2 = function(friend) {
+    				return $.ajax({
+    					url: "/getactive",
+    					type: "GET",
+    					dataType: "json",
+    					async: true,
+    					cache: false,
+    					data: {
+        					user: friend
+    					}
+					});
+  			};
+		
+		for (var i = 0; i < activecircs.length; i++) {
+  			(function() {
+  			var friend = is[i];
+  			var circ = activecircs[i];
+  			
+  			func2(friend).done(function(data) {
+  				if (data == true && circ.style.color == "red") {
+  					circ.style.color = "green";
+  				} else if (data == false && circ.style.color == "green") {
+  					circ.style.color = "red";
+  				}
+  			})
+  			}());
+		}
+  		}
+	</script>
+</html>

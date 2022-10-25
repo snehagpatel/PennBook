@@ -1,0 +1,29 @@
+Full name:  Ananya Singhal, Hetvi Shah, Kyle Xiong, Sneha Patel
+SEAS login: ananyasi, hetvis, kyxiong, snepatel
+Which features did you implement? 
+  (list features, or write 'Entire assignment')
+  Entire assignment
+  The PennBook folder contains our node application.
+  The LoadNetwork.java file under HW2 reads the news dataset and loads the dynamoDB tables locally.
+  The SocialNetworkJob file under HW3 contains code to run the Livy job.
+
+Did you complete any extra-credit tasks? If so, which ones?
+  (list extra-credit tasks)
+  - Number of friends
+  - Links to friends' profiles
+  - Displays friends' birthdays
+  - Automatic birthday posts
+  - Session timeout warning & countdown
+
+Did you personally write _all_ the code you are submitting
+(other than code from the course web page)?
+  [X] Yes
+  [ ] No
+
+Did you copy any code from the Internet, or from classmates?
+  [ ] Yes
+  [X] No
+
+Did you collaborate with anyone on this assignment?
+  [ ] Yes
+  [X] No

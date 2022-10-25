@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+      function getRecommendation() {
+        $.get('/newsrecommendation', function (data) {
+          console.log(data)
+          if (data === "") {
+            console.log("data is null")
+          } else {
+            var parsedData = JSON.parse(data);
+            console.log(parsedData);
+
+            console.log("data is not null")
+            var htmlOut = 
+            '<div class="d-flex justify-content-center">' + 
+              '<div class="w-100" style="max-width: 750px;">' + 
+                '<div class="card mt-5">' +
+                  '<div class="card-body">' +
+                    '<h5 class="text-primary"><a href = "'+ parsedData.link.S +'">'+ parsedData.headline.S +'</a></h5>' +
+                    '<small class="text-muted">'+ parsedData.date.S +'</small>' +
+                    '<div class="content">Author: '+ parsedData.authors.S +'</div>' +
+                    '<a id = "' + parsedData.pk.S + '" class="btn btn-primary" onClick=' + 'likeArticle("' + parsedData.pk.S + '")> Like</a>'
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>'
+            var newRow = document.createElement('div')
+            newRow.innerHTML = htmlOut;
+            document.getElementById('outerdiv').prepend(newRow)
+          }
+        })
+      }
+
+      function likeArticle(articleId) {
+        $.post('/likearticle', {
+          articleId: articleId
+        }, function(data, status) {
+          document.getElementById(articleId).classList.add("disabled");
+        })
+      }
+    </script>
+  </head>
+<body>
+	<!-- This is a simple page template that displays two values, with a simple 
+		   JavaScript conditional. You'll need something slightly fancier for HW4,
+		   probably with a loop for generating the rows of the table. -->
+  <%- include('../views/header', {display: 'news', userLoggedIn: userLoggedIn, userQuery: null }); %>
+  <h1>Newsfeed</h1>
+  <form action="/article" method="GET">
+    <input type="text" id="keyword" name="keyword" placeholder="Search news by terms">
+  <button type="submit" id="submit">Submit</button>
+
+  <button type="button" id = "recommendation" onclick="getRecommendation()">Get recommendations</button>
+  <div id="outerdiv">
+  <% for (var i = 0; i < recs.length; i++) { %>
+    <div class="d-flex justify-content-center">
+      <div class="w-100" style="max-width: 750px;">
+        <div class="card mt-5">
+          <div class="card-body">
+            <h5 class="text-primary"><a href = <%= recs[i].link.S %>><%= recs[i].headline.S %></a></h5>
+            <small class="text-muted"><%= recs[i].date.S %></small>
+					  <div class="content">Author: <%= recs[i].authors.S%></div>
+            <a id = "<%=recs[i].pk.S%>" class="btn btn-primary" onClick='likeArticle("<%=recs[i].pk.S%>")'> Like</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } %>
+  </div>
+ </form>
+</body>
+</html>
